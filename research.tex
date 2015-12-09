@@ -9,23 +9,22 @@
 Suppose you wish to create a recording of yourself as you move around and do activities. Usually, you have a middle man that is between you and your camera so that the they can control the camera so that it is continuously focused on you. However, it is not always the case that this cameraman is available to help you film yourself.
 
 \section{Problem Solution}
-To eliminate the need for a cameraman, a camera is first placed on a custom mount. Then from reading the inputstream of the camera, software we track your motion displacement and control the mount to follow your motions. The mount is capable of rotating along a horizontal plane and a vertical plane.
+To eliminate the need for a cameraman, a camera is first placed on a custom mount. Then from reading the input stream of the camera, software we track your motion displacement and control the mount to follow your motions. The mount is capable of rotating along a horizontal plane and a vertical plane.
 
 \section{Existing Solution}
 \subsection{SoloShot}
-First solution
-Designed for surfers to record practice runs
-works outdoor, waterproof
-built on Xigbee wireless communication and GPS
-uses marker armband so does not need to maintain line of sight
-does NOT work indoors or close range
-SoloShot2 adds tilting, zooming, start/stop button
+Soloshot solves the problem of not having a cameraman by having a custom mount that tracks user motions. A camera is then placed on top of the mount to film. The key to Soloshot’s solution is that the user must wear a tracking tag as they do their performance. The custom mount contains a component - called the base - that tracks the tag’s position via a real-time location system. This base tracks the tag and rotates accordingly using internal rotators.
+\par
+There are two main disadvantage to Soloshot’s solution. Firstly, the user is required to the wear a tag for the mount to follow. This would involve the user to attach onto themselves somehow or place it in their clothing. Using the track tags also raise an additional point of failure. If the tag failures to send signals to the mount then the solution no longer satisfies the problem statement. Secondly, the cost of the technology is very high with respect to normal camera expenses. With a mount that costs \$500, the technology is more geared towards professionals rather than amateurs. 
 
 \subsection{Swivl}
 Does pan and tilt using marker to sense what to follow
 requires line of sight
 
 \subsection{AlMe}
+AIMe aims your camera and keeps the subject framed. It uses an IR emitter that can be attached to any object that you want to track called EmIT. It pulses an IR signal differently than than what occurs naturally indoors or outdoors, so it's able to detect a unique pulsing pattern, lock on to it, and follow it, through tilting and swiveling the motors. AIMe is able to move up to 100 times per second and can be visible to over 100 feet away indoors and over 300 feet away outdoors. It's able to work with any small camera that has compatible mounting. Hardware wise, AIMe has double-sealed steel ball bearings that allow it to accomodate thousands of pounds of force, and is able to react to being dropped or jolted. [1]
+
+[1] http://www.jigabot.com/products/
 
 
 \end{document}
