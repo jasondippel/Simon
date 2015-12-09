@@ -4,7 +4,7 @@
 *  Created on: Nov 27, 2015
 *      Author: Team Simon
 *
-*  Modified on: Nov 28, 2015
+*  Modified on: Dec 8, 2015
 *      Author: Jason Dippel
 *
 *
@@ -49,9 +49,11 @@ namespace {
      */
     void help(char** av) {
         cout << "The program captures frames from a camera connected to your computer." << endl
-             << "Usage:\n" << av[0] << " [ device number = 0 ]" << endl
+             << "Usage:\n" << av[0] << " [ device number = 0 [ FLAGS ] ]" << endl
+             << "\tPossible Flags:" << endl
+             << "\t\ts - Save video" << endl
              << "\tTo find the device number, try ls /dev/video*" << endl
-             << "\texample: " << av[0] << " 0" << endl;
+             << "\texample: " << av[0] << " 0 -s" << endl;
     }
 
 
@@ -266,40 +268,49 @@ namespace {
      * @param: VideoCapture &capture - video feed
      *
      */
-    int process(VideoCapture &capture) {
+    int process(VideoCapture &capture, bool saveVid) {
         int n = 0;
         char filename[200];
-        string window_name = "Team Simon | Webcam";
-        cout << "press q or esc to quit" << endl;
-        namedWindow(window_name); // resizable window;
+        int frameWidth = capture.get(CV_CAP_PROP_FRAME_WIDTH);
+        int frameHeight = capture.get(CV_CAP_PROP_FRAME_HEIGHT);
+        VideoWriter video;
+        string windowName = "Team Simon | Webcam";
         Mat frame;
         Mat result;
-        // x and y values for the location of the object
         int x = 0, y = 0;
 
-        setMouseCallback(window_name, clickAndDrag_Rectangle, &frame);
+        namedWindow(windowName);
+        cout << "press q or esc to quit" << endl;
+
+        setMouseCallback(windowName, clickAndDrag_Rectangle, &frame);
+
+        if(saveVid) {
+            video.open("simon_output_normal.avi", CV_FOURCC('M', 'J', 'P', 'G'), 10 ,Size(frameWidth, frameHeight), true);
+        }
 
         for (;;) {
             capture >> frame;
             if(frame.empty())
                 break;
 
-            if(true) {
-                // find object
-                findBasicColor(frame, result);
+            // find object
+            findBasicColor(frame, result);
 
-                if (trackObject) {
-                    trackFilteredObject(x, y, result, frame);
-                }
-
+            if (trackObject) {
+                trackFilteredObject(x, y, result, frame);
             }
 
             // flip frame for wimpy humans TODO: fix this; selection rectangle not working correctly if frame flipped
             // flip(frame, frame, 1);
             // flip(result, result, 1);
 
-            imshow(window_name, frame);
+            imshow(windowName, frame);
             imshow("Result", result);
+
+            // save video
+            if(saveVid) {
+                video.write(frame);
+            }
 
             char key = (char)waitKey(2); // delay N ms, usually long enough to display and capture input
                                          // must have waitKey(x); if removed, we see nothing (not like a boss)
@@ -324,10 +335,20 @@ namespace {
 int main(int ac, char** av) {
 
     int devNum = 0;
+    bool saveVid = false;
 
     if (ac == 2) {
         devNum = atoi(av[1]);
-    } else if (ac > 2) {
+    } else if (ac == 3) {
+        devNum = atoi(av[1]);
+        if(strcmp(av[2],"-s") == 0) {
+            saveVid = true;
+        } else {
+            help(av);
+            cout << "Flag: " << av[2] << endl;
+        }
+
+    } else if (ac > 3) {
         help(av);
         return 1;
     }
@@ -349,5 +370,8 @@ int main(int ac, char** av) {
     rectangleSelected = false;
     trackObject = false;
 
-    return process(capture);
+    if(saveVid) cout << "Save Video: Yes" << endl;
+    else cout << "Save Video: No" << endl;
+
+    return process(capture, saveVid);
 }
